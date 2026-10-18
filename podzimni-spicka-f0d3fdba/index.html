@@ -100,7 +100,7 @@ footer { color: var(--muted); font-size: 13px; }
 </header>
 <main class="wrap">
   <div class="how">
-    <div><strong>Jak komentovat:</strong> pusťte video, zastavte ho tam, kde chcete změnu, a napište komentář pod video. Uloží se k dané sekundě a uvidí ho všichni, kdo mají tento odkaz. Když je verze v pořádku, klikněte na <strong>Schvaluji verzi</strong>.</div>
+    <div><strong>Jak komentovat:</strong> pusťte video, zastavte ho tam, kde chcete změnu, a napište komentář pod video. Uloží se k dané sekundě a uvidí ho všichni, kdo mají tento odkaz. Když je verze v pořádku, klikněte na <strong>Schvaluji toto video</strong>.</div>
     <label class="namebar" for="name">Vaše jméno <input id="name" maxlength="40" autocomplete="name" placeholder="např. Karel Novák"></label>
   </div>
   <div id="versions"></div>
@@ -310,14 +310,14 @@ function approvalBox(ver) {
     box.replaceChildren();
     for (const a of ok) box.append(el("div", { class: "approved", text: `✓ Schváleno: ${a.name} · ${day(a.created)}` }));
     if (ver.status === "final" || !open(ver)) return;
-    const btn = el("button", { class: "act primary", type: "button", text: `Schvaluji verzi ${ver.v}` });
+    const btn = el("button", { class: "act primary", type: "button", text: "Schvaluji toto video" });
     const msg = el("div", { class: "note", role: "status" });
     let armed = false;
     btn.addEventListener("click", async () => {
       if (needName()) return;
       if (!armed) {
         armed = true;
-        btn.textContent = `Opravdu schválit verzi ${ver.v}? Klikněte znovu`;
+        btn.textContent = "Opravdu schválit? Klikněte znovu";
         msg.textContent = "Schválení uvidí všichni s odkazem.";
         return;
       }
@@ -342,7 +342,7 @@ function approvalBox(ver) {
 function versionSection(ver, latest) {
   const s = el("section", { class: "version", id: `v${ver.v}` });
   s.append(el("div", { class: "vhead" },
-    el("h2", { text: `Verze ${ver.v}` }),
+    el("h2", { text: latest ? DATA.project.title : "Dřívější verze" }),
     el("span", { class: "date", text: day(ver.date) }),
     el("span", { class: `pill${ver.status === "final" ? " final" : ""}`, text: ver.status === "final" ? "Finální" : "Ke schválení" })));
   s.append(approvalBox(ver));
@@ -363,7 +363,7 @@ document.getElementById("title").textContent = DATA.project.title;
 const latest = DATA.versions[0];
 const meta = document.getElementById("meta");
 meta.append(el("span", { class: `pill${latest.status === "final" ? " final" : ""}`, text: latest.status === "final" ? "Finální" : "Ke schválení" }));
-meta.append(el("span", { text: `Verze ${latest.v} · ${day(latest.date)}` }));
+meta.append(el("span", { text: day(latest.date) }));
 if (DATA.project.client) meta.append(el("span", { text: DATA.project.client }));
 const root = document.getElementById("versions");
 root.append(versionSection(latest, true));
