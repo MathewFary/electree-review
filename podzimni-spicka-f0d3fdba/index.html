@@ -11,32 +11,20 @@
 <style>
 /* Layout: a client screening room (frame.io-like). Brand header band, one section per version
    (latest open); each video card = player, per-second timeline with comment markers, composer, thread list. */
-:root {
-  --bg: #EBF7F1; --surface: #FFFFFF; --ink: #0D3D34; --muted: #4A6D64; --line: #D8EAE0;
-  --lime: #D7FF00; --accent-ink: #20544A; --band: #0D3D34; --band-ink: #FFFFFF;
-  --tick: #C9DDD3; --tick-on: #0D3D34; --field: #F5FBF8;
-  --display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --body: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #082B25; --surface: #0D3D34; --ink: #EBF7F1; --muted: #96D5B7; --line: #20544A;
-    --accent-ink: #D7FF00; --band: #051F1B; --band-ink: #EBF7F1; --tick: #20544A; --tick-on: #D7FF00; --field: #0A332C;
-    color-scheme: dark;
-  }
-}
+:root { --bg: #EBF7F1; --surface: #FFFFFF; --ink: #0D3D34; --muted: #4A6D64; --line: #D8EAE0; --accent: #D7FF00; --on-accent: #0D3D34; --accent-ink: #20544A; --band: #0D3D34; --band-ink: #FFFFFF; --band-accent: #D7FF00; --tick: #C9DDD3; --tick-on: #0D3D34; --field: #F5FBF8; --display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; --body: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root { --bg: #082B25; --surface: #0D3D34; --ink: #EBF7F1; --muted: #96D5B7; --line: #20544A; --accent: #D7FF00; --on-accent: #0D3D34; --accent-ink: #D7FF00; --band: #051F1B; --band-ink: #EBF7F1; --band-accent: #D7FF00; --tick: #20544A; --tick-on: #D7FF00; --field: #0A332C; color-scheme: dark; } }
+
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
 .wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 header.band { background: var(--band); color: var(--band-ink); padding-top: env(safe-area-inset-top, 0px); }
 header.band .wrap { padding-block: 28px 30px; display: grid; gap: 10px; }
-.brand { font: 700 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--lime); }
+.brand { font: 700 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--band-accent); }
 h1 { font: 800 clamp(28px, 5vw, 44px)/1.05 var(--display); letter-spacing: -0.03em; margin: 0; text-wrap: balance; }
 .meta { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; color: color-mix(in srgb, var(--band-ink) 75%, transparent); }
-.pill { font: 700 12px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--lime); color: #0D3D34; }
+.meta .pill { background: var(--band-accent); color: var(--band); }
+.pill { font: 700 12px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--accent); color: var(--on-accent); }
 .pill.final { background: var(--band-ink); color: var(--band); }
 main.wrap { padding-block: 28px calc(64px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 28px; }
 .how { display: grid; gap: 10px; max-width: 72ch; color: var(--muted); }
@@ -63,7 +51,7 @@ video { display: block; width: 100%; max-height: 72vh; object-fit: contain; back
 .tick:hover, .tick:focus-visible { background: var(--accent-ink); outline: none; }
 .tick.past { background: color-mix(in srgb, var(--tick-on) 45%, var(--tick)); }
 .tick.on { background: var(--tick-on); }
-.tick.has::after { content: ""; position: absolute; left: 50%; top: -7px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 2px var(--surface); }
+.tick.has::after { content: ""; position: absolute; left: 50%; top: -7px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--surface); }
 .scale { position: relative; height: 14px; font: 500 10px/14px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 .scale span { position: absolute; transform: translateX(-50%); }
 .scale span:first-child { transform: none; }
@@ -71,7 +59,7 @@ video { display: block; width: 100%; max-height: 72vh; object-fit: contain; back
 .composer textarea { min-height: 64px; resize: vertical; width: 100%; }
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 button.act, a.act { font: 700 13px/1 var(--display); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-decoration: none; display: inline-block; }
-button.act.primary { background: var(--lime); border-color: var(--lime); color: #0D3D34; }
+button.act.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 button.act:focus-visible, a.act:focus-visible { outline: 3px solid var(--accent-ink); outline-offset: 2px; }
 button.act:disabled { opacity: .55; cursor: default; }
 .note { font-size: 13px; color: var(--muted); min-height: 1.2em; }
@@ -81,15 +69,17 @@ button.act:disabled { opacity: .55; cursor: default; }
 .c { display: grid; grid-template-columns: 32px 1fr; gap: 10px; }
 .c.reply { margin-left: 42px; }
 .c.done { opacity: .55; }
-.av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font: 800 12px/1 var(--display); color: #0D3D34; }
+.av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font: 800 12px/1 var(--display); color: #1B1E24; }
 .c .body { min-width: 0; display: grid; gap: 3px; }
 .c .top { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
 .c .who { font-weight: 700; }
 .c .when { font-size: 12px; color: var(--muted); }
 .c .txt { white-space: pre-wrap; overflow-wrap: anywhere; }
-.chip { font: 500 12px/1 var(--mono); padding: 4px 7px; border-radius: 6px; border: 0; background: var(--lime); color: #0D3D34; cursor: pointer; }
+.chip { font: 500 12px/1 var(--mono); padding: 4px 7px; border-radius: 6px; border: 0; background: var(--accent); color: var(--on-accent); cursor: pointer; }
 .linkbtn { font: 700 12px/1 var(--display); border: 0; background: none; color: var(--accent-ink); cursor: pointer; padding: 2px 0; justify-self: start; }
 .badge { font: 700 11px/1 var(--display); color: var(--accent-ink); }
+.approve { display: grid; gap: 6px; }
+.approved { font: 700 14px/1.3 var(--display); color: var(--accent-ink); }
 .changes { margin: 0; padding-left: 18px; display: grid; gap: 4px; max-width: 75ch; }
 .version > h3 { font: 700 15px/1.3 var(--display); margin: 0; }
 .stack { display: grid; gap: 32px; }
@@ -103,14 +93,14 @@ footer { color: var(--muted); font-size: 13px; }
 <body>
 <header class="band">
   <div class="wrap">
-    <div class="brand">Electree · revize videa</div>
+    <div class="brand" id="brand"></div>
     <h1 id="title"></h1>
     <div class="meta" id="meta"></div>
   </div>
 </header>
 <main class="wrap">
   <div class="how">
-    <div><strong>Jak komentovat:</strong> pusťte video, zastavte ho tam, kde chcete změnu, a napište komentář pod video. Uloží se k dané sekundě a uvidí ho všichni, kdo mají tento odkaz.</div>
+    <div><strong>Jak komentovat:</strong> pusťte video, zastavte ho tam, kde chcete změnu, a napište komentář pod video. Uloží se k dané sekundě a uvidí ho všichni, kdo mají tento odkaz. Když je verze v pořádku, klikněte na <strong>Schvaluji verzi</strong>.</div>
     <label class="namebar" for="name">Vaše jméno <input id="name" maxlength="40" autocomplete="name" placeholder="např. Jana z Dodavatele"></label>
   </div>
   <div id="versions"></div>
@@ -118,7 +108,7 @@ footer { color: var(--muted); font-size: 13px; }
 </main>
 
 <script>
-const DATA = /*@DATA*/{"project":{"title":"Podzimní špička","client":"","key":"podzimni-spicka-f0d3fdba"},"endpoint":"https://script.google.com/macros/s/AKfycbyR8FEQTIhnetbsjmlv_J0BhK8oJGNCOEnQIuf7bdEbLM_VxPTijkUQ2SWUN2eZltIu/exec","versions":[{"v":6,"date":"2026-10-18","status":"review","changes":["Nová hudba pod celým videem","Graf večerní špičky: kamera se přiblíží víc a popisky zůstávají v záběru","Každý titulek zůstane na obrazovce dost dlouho na přečtení"],"videos":[{"key":"nomusic","label":"Bez hudby","file":"PodzimniSpicka-NoMusic.mp4","src":"v6/PodzimniSpicka-NoMusic.mp4","poster":"v6/PodzimniSpicka-NoMusic.jpg","size":6106249,"w":1080,"h":1920,"seconds":36.5},{"key":"withmusic","label":"S hudbou","file":"PodzimniSpicka-WithMusic.mp4","src":"v6/PodzimniSpicka-WithMusic.mp4","poster":"v6/PodzimniSpicka-WithMusic.jpg","size":6106249,"w":1080,"h":1920,"seconds":36.5}]}]}/*@END*/;
+const DATA = /*@DATA*/{"project":{"title":"Podzimní špička","client":"","key":"podzimni-spicka-f0d3fdba"},"endpoint":"https://script.google.com/macros/s/AKfycbyR8FEQTIhnetbsjmlv_J0BhK8oJGNCOEnQIuf7bdEbLM_VxPTijkUQ2SWUN2eZltIu/exec","theme":{"label":"Electree · revize videa","credit":"Připravilo Electree","avatars":["#D7FF00","#96D5B7","#D8EAE0","#BFE8A8","#E6F59A"]},"versions":[{"v":6,"date":"2026-10-18","status":"review","changes":["Nová hudba pod celým videem","Graf večerní špičky: kamera se přiblíží víc a popisky zůstávají v záběru","Každý titulek zůstane na obrazovce dost dlouho na přečtení"],"videos":[{"key":"nomusic","label":"Bez hudby","file":"PodzimniSpicka-NoMusic.mp4","src":"v6/PodzimniSpicka-NoMusic.mp4","poster":"v6/PodzimniSpicka-NoMusic.jpg","size":6106249,"w":1080,"h":1920,"seconds":36.5},{"key":"withmusic","label":"S hudbou","file":"PodzimniSpicka-WithMusic.mp4","src":"v6/PodzimniSpicka-WithMusic.mp4","poster":"v6/PodzimniSpicka-WithMusic.jpg","size":6106249,"w":1080,"h":1920,"seconds":36.5}],"comments":true}]}/*@END*/;
 const API = DATA.endpoint;
 
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
@@ -141,7 +131,7 @@ const el = (tag, attrs = {}, ...kids) => {
   for (const k of kids) if (k) e.append(k);
   return e;
 };
-const AV = ["#D7FF00", "#96D5B7", "#D8EAE0", "#BFE8A8", "#E6F59A"];
+const AV = DATA.theme.avatars;
 const avatar = (name) => {
   let h = 0;
   for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) | 0;
@@ -176,6 +166,7 @@ async function load() {
     if (j.ok) {
       comments = j.comments;
       cards.forEach((c) => c.render());
+      approvalBoxes.forEach((r) => r());
     }
   } catch {}
 }
@@ -186,6 +177,8 @@ async function post(body) {
   if (!j.ok) throw new Error(j.error || "failed");
   return j.comment;
 }
+
+const open = (ver) => !!API && ver.comments !== false;
 
 function videoCard(ver, vid) {
   const card = el("article", { class: "card" });
@@ -243,12 +236,8 @@ function videoCard(ver, vid) {
       send.disabled = false;
     }
   });
-  if (!API) {
-    text.disabled = true;
-    send.disabled = true;
-    note.textContent = "Komentáře zatím nejsou zapnuté.";
-  }
-  card.append(el("div", { class: "composer" }, text, el("div", { class: "row" }, send, dl), note));
+  if (open(ver)) card.append(el("div", { class: "composer" }, text, el("div", { class: "row" }, send, dl), note));
+  else card.append(el("div", { class: "row" }, dl), el("div", { class: "note", text: ver.status === "final" ? "Finální verze: komentáře jsou uzavřené." : "Komentáře k této verzi jsou vypnuté." }));
 
   // thread list
   const list = el("div", { class: "thread" });
@@ -266,7 +255,7 @@ function videoCard(ver, vid) {
     if (c.done) top.append(el("span", { class: "badge", text: "✓ Vyřešeno" }));
     const body = el("div", { class: "body" }, top, el("div", { class: "txt", text: c.text }));
     const wrap = el("div", { class: `c${isReply ? " reply" : ""}${c.done ? " done" : ""}` }, avatar(c.name), body);
-    if (!isReply && API) {
+    if (!isReply && open(ver)) {
       const rb = el("button", { class: "linkbtn", type: "button", text: "Odpovědět" });
       rb.addEventListener("click", () => {
         if (body.querySelector("textarea")) return;
@@ -296,11 +285,12 @@ function videoCard(ver, vid) {
 
   function render() {
     const mine = comments.filter((c) => c.version === ver.v && c.video === vid.key);
+    list.hidden = !open(ver) && !mine.length;
     const roots = mine.filter((c) => !c.parent).sort((a, b) => a.second - b.second || a.created.localeCompare(b.created));
     const marked = new Set(roots.map((c) => c.second));
     tickEls.forEach((t, i) => t.classList.toggle("has", marked.has(i)));
     list.replaceChildren(el("h4", { text: roots.length ? `Komentáře (${mine.length})` : "Komentáře" }));
-    if (!roots.length) list.append(el("div", { class: "empty", text: API ? "Zatím žádné komentáře." : "" }));
+    if (!roots.length) list.append(el("div", { class: "empty", text: "Zatím žádné komentáře." }));
     for (const r of roots) {
       list.append(item(r, false));
       for (const rep of mine.filter((c) => c.parent === r.id).sort((a, b) => a.created.localeCompare(b.created))) list.append(item(rep, true));
@@ -311,12 +301,51 @@ function videoCard(ver, vid) {
   return card;
 }
 
+const approvalBoxes = [];
+
+function approvalBox(ver) {
+  const box = el("div", { class: "approve" });
+  const render = () => {
+    const ok = comments.filter((c) => c.version === ver.v && c.video === "_approval");
+    box.replaceChildren();
+    for (const a of ok) box.append(el("div", { class: "approved", text: `✓ Schváleno: ${a.name} · ${day(a.created)}` }));
+    if (ver.status === "final" || !open(ver)) return;
+    const btn = el("button", { class: "act primary", type: "button", text: `Schvaluji verzi ${ver.v}` });
+    const msg = el("div", { class: "note", role: "status" });
+    let armed = false;
+    btn.addEventListener("click", async () => {
+      if (needName()) return;
+      if (!armed) {
+        armed = true;
+        btn.textContent = `Opravdu schválit verzi ${ver.v}? Klikněte znovu`;
+        msg.textContent = "Schválení uvidí všichni s odkazem.";
+        return;
+      }
+      btn.disabled = true;
+      msg.textContent = "Odesílám…";
+      try {
+        const r = await post({ version: ver.v, video: "_approval", second: 0, name: nameInput.value.trim(), text: `Schváleno: verze ${ver.v}` });
+        comments.push({ ...r, created: new Date().toISOString(), done: false });
+        render();
+      } catch {
+        btn.disabled = false;
+        msg.textContent = "Schválení se nepodařilo odeslat. Zkuste to znovu.";
+      }
+    });
+    box.append(el("div", { class: "row" }, btn), msg);
+  };
+  approvalBoxes.push(render);
+  render();
+  return box;
+}
+
 function versionSection(ver, latest) {
   const s = el("section", { class: "version", id: `v${ver.v}` });
   s.append(el("div", { class: "vhead" },
     el("h2", { text: `Verze ${ver.v}` }),
     el("span", { class: "date", text: day(ver.date) }),
     el("span", { class: `pill${ver.status === "final" ? " final" : ""}`, text: ver.status === "final" ? "Finální" : "Ke schválení" })));
+  s.append(approvalBox(ver));
   const landscape = ver.videos.every((v) => v.w > v.h);
   const grid = el("div", { class: `videos${landscape ? " landscape" : ""}` });
   for (const vid of ver.videos) grid.append(videoCard(ver, vid));
@@ -345,7 +374,8 @@ if (DATA.versions.length > 1) {
   d.append(inner);
   root.append(d);
 }
-document.getElementById("foot").textContent = `Připravilo Electree · ${DATA.project.title} · aktualizováno ${day(latest.date)}`;
+document.getElementById("brand").textContent = DATA.theme.label;
+document.getElementById("foot").textContent = [DATA.theme.credit, DATA.project.title, `aktualizováno ${day(latest.date)}`].filter(Boolean).join(" · ");
 
 load();
 setInterval(() => { if (!document.hidden) load(); }, 30000);
