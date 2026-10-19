@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Revize · Carousely · říjen 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a client screening room (frame.io-like). Brand header band, one section per version
+   (latest open); each video card = player, per-second timeline with comment markers, composer, thread list. */
+:root { --bg: #EBF7F1; --surface: #FFFFFF; --ink: #0D3D34; --muted: #4A6D64; --line: #D8EAE0; --accent: #D7FF00; --on-accent: #0D3D34; --accent-ink: #20544A; --band: #0D3D34; --band-ink: #FFFFFF; --band-accent: #D7FF00; --tick: #C9DDD3; --tick-on: #0D3D34; --field: #F5FBF8; --display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; --body: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root { --bg: #082B25; --surface: #0D3D34; --ink: #EBF7F1; --muted: #96D5B7; --line: #20544A; --accent: #D7FF00; --on-accent: #0D3D34; --accent-ink: #D7FF00; --band: #051F1B; --band-ink: #EBF7F1; --band-accent: #D7FF00; --tick: #20544A; --tick-on: #D7FF00; --field: #0A332C; color-scheme: dark; } }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header.band { background: var(--band); color: var(--band-ink); padding-top: env(safe-area-inset-top, 0px); }
+header.band .wrap { padding-block: 28px 30px; display: grid; gap: 10px; }
+.brand { font: 700 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--band-accent); }
+h1 { font: 800 clamp(28px, 5vw, 44px)/1.05 var(--display); letter-spacing: -0.03em; margin: 0; text-wrap: balance; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; color: color-mix(in srgb, var(--band-ink) 75%, transparent); }
+.meta .pill { background: var(--band-accent); color: var(--band); }
+.pill { font: 700 12px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: var(--accent); color: var(--on-accent); }
+.pill.final { background: var(--band-ink); color: var(--band); }
+main.wrap { padding-block: 28px calc(64px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 28px; }
+.how { display: grid; gap: 10px; max-width: 72ch; color: var(--muted); }
+.how strong { color: var(--ink); }
+.namebar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--ink); font-weight: 700; }
+input, textarea { font: inherit; color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; }
+input:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent-ink); outline-offset: 1px; }
+#name { width: min(100%, 260px); }
+input.need { outline: 3px solid #E5332A; }
+section.version { display: grid; gap: 18px; }
+.vhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+.vhead h2 { font: 800 22px/1.2 var(--display); letter-spacing: -0.02em; margin: 0; }
+.vhead .date { color: var(--muted); font-variant-numeric: tabular-nums; }
+.videos { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); align-items: start; }
+.videos.landscape { grid-template-columns: repeat(auto-fit, minmax(min(100%, 560px), 1fr)); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px; display: grid; gap: 12px; min-width: 0; }
+.card h3 { margin: 0; font: 700 15px/1.3 var(--display); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.card h3 span { font: 500 12px/1.3 var(--mono); color: var(--muted); }
+.frame { background: #000; border-radius: 12px; overflow: hidden; }
+video { display: block; width: 100%; max-height: 72vh; object-fit: contain; background: #000; }
+.frame { position: relative; }
+.nav { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(255,255,255,.8); color: #000; font: 700 24px/1 var(--display); cursor: pointer; display: grid; place-items: center; padding-bottom: 3px; }
+.nav.prev { left: 10px; } .nav.next { right: 10px; } .nav[hidden] { display: none; }
+.nav:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(44px, 1fr); gap: 6px; overflow-x: auto; padding: 8px 0 2px; }
+.thumb { position: relative; padding: 0; border: 2px solid transparent; border-radius: 8px; overflow: hidden; background: #000; cursor: pointer; aspect-ratio: 4 / 5; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .7; }
+.thumb span { position: absolute; left: 4px; bottom: 3px; font: 700 11px/1 var(--display); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
+.thumb.on { border-color: var(--accent); } .thumb.on img { opacity: 1; }
+.thumb:focus-visible { outline: 3px solid var(--accent-ink); outline-offset: 1px; }
+.thumb.has::after { content: ""; position: absolute; right: 4px; top: 4px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px #000; }
+.timeline { display: grid; gap: 4px; }
+.ticks { display: flex; gap: 2px; height: 26px; align-items: stretch; }
+.tick { position: relative; flex: 1 1 0; min-width: 0; border: 0; padding: 0; border-radius: 3px; background: var(--tick); cursor: pointer; }
+.tick:hover, .tick:focus-visible { background: var(--accent-ink); outline: none; }
+.tick.past { background: color-mix(in srgb, var(--tick-on) 45%, var(--tick)); }
+.tick.on { background: var(--tick-on); }
+.tick.has::after { content: ""; position: absolute; left: 50%; top: -7px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--surface); }
+.scale { position: relative; height: 14px; font: 500 10px/14px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.scale span { position: absolute; transform: translateX(-50%); }
+.scale span:first-child { transform: none; }
+.composer { display: grid; gap: 8px; }
+.composer textarea { min-height: 64px; resize: vertical; width: 100%; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button.act, a.act { font: 700 13px/1 var(--display); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-decoration: none; display: inline-block; }
+button.act.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+button.act:focus-visible, a.act:focus-visible { outline: 3px solid var(--accent-ink); outline-offset: 2px; }
+button.act:disabled { opacity: .55; cursor: default; }
+.note { font-size: 13px; color: var(--muted); min-height: 1.2em; }
+.thread { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 12px; }
+.thread h4 { margin: 0; font: 700 13px/1.2 var(--display); color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+.empty { color: var(--muted); font-size: 14px; }
+.c { display: grid; grid-template-columns: 32px 1fr; gap: 10px; }
+.c.reply { margin-left: 42px; }
+.c.done { opacity: .55; }
+.av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font: 800 12px/1 var(--display); color: #1B1E24; }
+.c .body { min-width: 0; display: grid; gap: 3px; }
+.c .top { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.c .who { font-weight: 700; }
+.c .when { font-size: 12px; color: var(--muted); }
+.c .txt { white-space: pre-wrap; overflow-wrap: anywhere; }
+.chip { font: 500 12px/1 var(--mono); padding: 4px 7px; border-radius: 6px; border: 0; background: var(--accent); color: var(--on-accent); cursor: pointer; }
+.linkbtn { font: 700 12px/1 var(--display); border: 0; background: none; color: var(--accent-ink); cursor: pointer; padding: 2px 0; justify-self: start; }
+.badge { font: 700 11px/1 var(--display); color: var(--accent-ink); }
+.approve { display: grid; gap: 6px; }
+.approved { font: 700 14px/1.3 var(--display); color: var(--accent-ink); }
+.changes { margin: 0; padding-left: 18px; display: grid; gap: 4px; max-width: 75ch; }
+.version > h3 { font: 700 15px/1.3 var(--display); margin: 0; }
+.stack { display: grid; gap: 32px; }
+.toc { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.toc a { display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none; font: 700 14px/1.3 var(--display); }
+.toc a span { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); font-size: 12px; }
+.toc a:hover, .toc a:focus-visible { border-color: var(--accent-ink); outline: none; }
+.stack > .version + .version { border-top: 2px solid var(--line); padding-top: 28px; }
+details.older { border-top: 1px solid var(--line); padding-top: 14px; }
+details.older > summary { cursor: pointer; font: 700 15px/1.3 var(--display); color: var(--muted); }
+details.older[open] > summary { margin-bottom: 18px; }
+footer { color: var(--muted); font-size: 13px; }
+@media (prefers-reduced-motion: no-preference) { .tick { transition: background .12s; } }
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="wrap">
+    <div class="brand" id="brand"></div>
+    <h1 id="title"></h1>
+    <div class="meta" id="meta"></div>
+  </div>
+</header>
+<main class="wrap">
+  <div class="how">
+    <div id="how"></div>
+    <label class="namebar" for="name">Vaše jméno <input id="name" maxlength="40" autocomplete="name" placeholder="např. Karel Novák"></label>
+  </div>
+  <div id="versions"></div>
+  <footer id="foot"></footer>
+</main>
+
+<script>
+const DATA = /*@DATA*/{"project":{"title":"Carousely · říjen 2026","client":"Dodavatel","key":"carousely-rijen-223d5a58","type":"carousel","bundle":true,"date":"2026-10-19"},"endpoint":"https://script.google.com/macros/s/AKfycbyR8FEQTIhnetbsjmlv_J0BhK8oJGNCOEnQIuf7bdEbLM_VxPTijkUQ2SWUN2eZltIu/exec","theme":{"label":"Electree · revize","credit":"Připravilo Electree","avatars":["#D7FF00","#96D5B7","#D8EAE0","#BFE8A8","#E6F59A"]},"versions":[{"slug":"standby","title":"Má smysl vypínat spotřebiče ze zásuvky?","v":3,"date":"2026-10-19","status":"review","changes":["Větší popisky v grafice","Sjednocená částka 500 Kč ročně"],"videos":[{"key":"standby-nolightleak","label":"Čistý","file":"nolightleak","w":1080,"h":1350,"seconds":6,"size":1266905,"slides":[{"n":1,"file":"slide-01.mp4","src":"standby/v3/nolightleak/slide-01.mp4","poster":"standby/v3/nolightleak/slide-01.jpg","size":124792,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"standby/v3/nolightleak/slide-02.mp4","poster":"standby/v3/nolightleak/slide-02.jpg","size":190795,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"standby/v3/nolightleak/slide-03.mp4","poster":"standby/v3/nolightleak/slide-03.jpg","size":162764,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"standby/v3/nolightleak/slide-04.mp4","poster":"standby/v3/nolightleak/slide-04.jpg","size":213271,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"standby/v3/nolightleak/slide-05.mp4","poster":"standby/v3/nolightleak/slide-05.jpg","size":174160,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"standby/v3/nolightleak/slide-06.mp4","poster":"standby/v3/nolightleak/slide-06.jpg","size":193280,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"standby/v3/nolightleak/slide-07.mp4","poster":"standby/v3/nolightleak/slide-07.jpg","size":207843,"seconds":6}]},{"key":"standby-cinematic","label":"Filmový","file":"cinematic","w":1080,"h":1350,"seconds":6,"size":3247513,"slides":[{"n":1,"file":"slide-01.mp4","src":"standby/v3/cinematic/slide-01.mp4","poster":"standby/v3/cinematic/slide-01.jpg","size":390663,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"standby/v3/cinematic/slide-02.mp4","poster":"standby/v3/cinematic/slide-02.jpg","size":474069,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"standby/v3/cinematic/slide-03.mp4","poster":"standby/v3/cinematic/slide-03.jpg","size":411532,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"standby/v3/cinematic/slide-04.mp4","poster":"standby/v3/cinematic/slide-04.jpg","size":495294,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"standby/v3/cinematic/slide-05.mp4","poster":"standby/v3/cinematic/slide-05.jpg","size":479440,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"standby/v3/cinematic/slide-06.mp4","poster":"standby/v3/cinematic/slide-06.jpg","size":495703,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"standby/v3/cinematic/slide-07.mp4","poster":"standby/v3/cinematic/slide-07.jpg","size":500812,"seconds":6}]},{"key":"standby-editorial","label":"Editorial","file":"editorial","w":1080,"h":1350,"seconds":6,"size":1284411,"slides":[{"n":1,"file":"slide-01.mp4","src":"standby/v3/editorial/slide-01.mp4","poster":"standby/v3/editorial/slide-01.jpg","size":152167,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"standby/v3/editorial/slide-02.mp4","poster":"standby/v3/editorial/slide-02.jpg","size":185080,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"standby/v3/editorial/slide-03.mp4","poster":"standby/v3/editorial/slide-03.jpg","size":176577,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"standby/v3/editorial/slide-04.mp4","poster":"standby/v3/editorial/slide-04.jpg","size":210744,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"standby/v3/editorial/slide-05.mp4","poster":"standby/v3/editorial/slide-05.jpg","size":188905,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"standby/v3/editorial/slide-06.mp4","poster":"standby/v3/editorial/slide-06.jpg","size":194454,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"standby/v3/editorial/slide-07.mp4","poster":"standby/v3/editorial/slide-07.jpg","size":176484,"seconds":6}]},{"key":"standby-paper","label":"Papírový","file":"paper","w":1080,"h":1350,"seconds":6,"size":1431917,"slides":[{"n":1,"file":"slide-01.mp4","src":"standby/v3/paper/slide-01.mp4","poster":"standby/v3/paper/slide-01.jpg","size":152138,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"standby/v3/paper/slide-02.mp4","poster":"standby/v3/paper/slide-02.jpg","size":188482,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"standby/v3/paper/slide-03.mp4","poster":"standby/v3/paper/slide-03.jpg","size":171615,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"standby/v3/paper/slide-04.mp4","poster":"standby/v3/paper/slide-04.jpg","size":245395,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"standby/v3/paper/slide-05.mp4","poster":"standby/v3/paper/slide-05.jpg","size":186693,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"standby/v3/paper/slide-06.mp4","poster":"standby/v3/paper/slide-06.jpg","size":299214,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"standby/v3/paper/slide-07.mp4","poster":"standby/v3/paper/slide-07.jpg","size":188380,"seconds":6}]}],"approvalKey":"_approval-standby","comments":true},{"slug":"stehovani","title":"Stěhujete se? Energie mají vlastní checklist","v":3,"date":"2026-10-19","status":"review","changes":["Větší popisky v grafice","Kratší nadpis u kódu EAN"],"videos":[{"key":"stehovani-nolightleak","label":"Čistý","file":"nolightleak","w":1080,"h":1350,"seconds":6,"size":1299620,"slides":[{"n":1,"file":"slide-01.mp4","src":"stehovani/v3/nolightleak/slide-01.mp4","poster":"stehovani/v3/nolightleak/slide-01.jpg","size":133730,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"stehovani/v3/nolightleak/slide-02.mp4","poster":"stehovani/v3/nolightleak/slide-02.jpg","size":225025,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"stehovani/v3/nolightleak/slide-03.mp4","poster":"stehovani/v3/nolightleak/slide-03.jpg","size":182576,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"stehovani/v3/nolightleak/slide-04.mp4","poster":"stehovani/v3/nolightleak/slide-04.jpg","size":172089,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"stehovani/v3/nolightleak/slide-05.mp4","poster":"stehovani/v3/nolightleak/slide-05.jpg","size":164988,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"stehovani/v3/nolightleak/slide-06.mp4","poster":"stehovani/v3/nolightleak/slide-06.jpg","size":238003,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"stehovani/v3/nolightleak/slide-07.mp4","poster":"stehovani/v3/nolightleak/slide-07.jpg","size":183209,"seconds":6}]},{"key":"stehovani-cinematic","label":"Filmový","file":"cinematic","w":1080,"h":1350,"seconds":6,"size":3397396,"slides":[{"n":1,"file":"slide-01.mp4","src":"stehovani/v3/cinematic/slide-01.mp4","poster":"stehovani/v3/cinematic/slide-01.jpg","size":505453,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"stehovani/v3/cinematic/slide-02.mp4","poster":"stehovani/v3/cinematic/slide-02.jpg","size":529031,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"stehovani/v3/cinematic/slide-03.mp4","poster":"stehovani/v3/cinematic/slide-03.jpg","size":504922,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"stehovani/v3/cinematic/slide-04.mp4","poster":"stehovani/v3/cinematic/slide-04.jpg","size":417595,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"stehovani/v3/cinematic/slide-05.mp4","poster":"stehovani/v3/cinematic/slide-05.jpg","size":498611,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"stehovani/v3/cinematic/slide-06.mp4","poster":"stehovani/v3/cinematic/slide-06.jpg","size":523485,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"stehovani/v3/cinematic/slide-07.mp4","poster":"stehovani/v3/cinematic/slide-07.jpg","size":418299,"seconds":6}]},{"key":"stehovani-editorial","label":"Editorial","file":"editorial","w":1080,"h":1350,"seconds":6,"size":1417764,"slides":[{"n":1,"file":"slide-01.mp4","src":"stehovani/v3/editorial/slide-01.mp4","poster":"stehovani/v3/editorial/slide-01.jpg","size":191837,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"stehovani/v3/editorial/slide-02.mp4","poster":"stehovani/v3/editorial/slide-02.jpg","size":241854,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"stehovani/v3/editorial/slide-03.mp4","poster":"stehovani/v3/editorial/slide-03.jpg","size":221729,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"stehovani/v3/editorial/slide-04.mp4","poster":"stehovani/v3/editorial/slide-04.jpg","size":200114,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"stehovani/v3/editorial/slide-05.mp4","poster":"stehovani/v3/editorial/slide-05.jpg","size":170400,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"stehovani/v3/editorial/slide-06.mp4","poster":"stehovani/v3/editorial/slide-06.jpg","size":219889,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"stehovani/v3/editorial/slide-07.mp4","poster":"stehovani/v3/editorial/slide-07.jpg","size":171941,"seconds":6}]},{"key":"stehovani-paper","label":"Papírový","file":"paper","w":1080,"h":1350,"seconds":6,"size":1524637,"slides":[{"n":1,"file":"slide-01.mp4","src":"stehovani/v3/paper/slide-01.mp4","poster":"stehovani/v3/paper/slide-01.jpg","size":164011,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"stehovani/v3/paper/slide-02.mp4","poster":"stehovani/v3/paper/slide-02.jpg","size":255034,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"stehovani/v3/paper/slide-03.mp4","poster":"stehovani/v3/paper/slide-03.jpg","size":205357,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"stehovani/v3/paper/slide-04.mp4","poster":"stehovani/v3/paper/slide-04.jpg","size":197183,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"stehovani/v3/paper/slide-05.mp4","poster":"stehovani/v3/paper/slide-05.jpg","size":178300,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"stehovani/v3/paper/slide-06.mp4","poster":"stehovani/v3/paper/slide-06.jpg","size":344164,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"stehovani/v3/paper/slide-07.mp4","poster":"stehovani/v3/paper/slide-07.jpg","size":180588,"seconds":6}]}],"approvalKey":"_approval-stehovani","comments":true},{"slug":"pred-odjezdem","title":"Předodjezdový checklist pro byt a dům","v":3,"date":"2026-10-19","status":"review","changes":["Větší popisky v grafice","Bojler: místo přeškrtnutého textu jasné „ušetříte až 21 kWh“","Poslední kontrola: obrázky místo druhého seznamu"],"videos":[{"key":"pred-odjezdem-nolightleak","label":"Čistý","file":"nolightleak","w":1080,"h":1350,"seconds":6,"size":1289216,"slides":[{"n":1,"file":"slide-01.mp4","src":"pred-odjezdem/v3/nolightleak/slide-01.mp4","poster":"pred-odjezdem/v3/nolightleak/slide-01.jpg","size":138997,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"pred-odjezdem/v3/nolightleak/slide-02.mp4","poster":"pred-odjezdem/v3/nolightleak/slide-02.jpg","size":211569,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"pred-odjezdem/v3/nolightleak/slide-03.mp4","poster":"pred-odjezdem/v3/nolightleak/slide-03.jpg","size":184084,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"pred-odjezdem/v3/nolightleak/slide-04.mp4","poster":"pred-odjezdem/v3/nolightleak/slide-04.jpg","size":221205,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"pred-odjezdem/v3/nolightleak/slide-05.mp4","poster":"pred-odjezdem/v3/nolightleak/slide-05.jpg","size":174205,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"pred-odjezdem/v3/nolightleak/slide-06.mp4","poster":"pred-odjezdem/v3/nolightleak/slide-06.jpg","size":195650,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"pred-odjezdem/v3/nolightleak/slide-07.mp4","poster":"pred-odjezdem/v3/nolightleak/slide-07.jpg","size":163506,"seconds":6}]},{"key":"pred-odjezdem-cinematic","label":"Filmový","file":"cinematic","w":1080,"h":1350,"seconds":6,"size":3314007,"slides":[{"n":1,"file":"slide-01.mp4","src":"pred-odjezdem/v3/cinematic/slide-01.mp4","poster":"pred-odjezdem/v3/cinematic/slide-01.jpg","size":453040,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"pred-odjezdem/v3/cinematic/slide-02.mp4","poster":"pred-odjezdem/v3/cinematic/slide-02.jpg","size":524648,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"pred-odjezdem/v3/cinematic/slide-03.mp4","poster":"pred-odjezdem/v3/cinematic/slide-03.jpg","size":468040,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"pred-odjezdem/v3/cinematic/slide-04.mp4","poster":"pred-odjezdem/v3/cinematic/slide-04.jpg","size":590904,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"pred-odjezdem/v3/cinematic/slide-05.mp4","poster":"pred-odjezdem/v3/cinematic/slide-05.jpg","size":471508,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"pred-odjezdem/v3/cinematic/slide-06.mp4","poster":"pred-odjezdem/v3/cinematic/slide-06.jpg","size":482154,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"pred-odjezdem/v3/cinematic/slide-07.mp4","poster":"pred-odjezdem/v3/cinematic/slide-07.jpg","size":323713,"seconds":6}]},{"key":"pred-odjezdem-editorial","label":"Editorial","file":"editorial","w":1080,"h":1350,"seconds":6,"size":1395734,"slides":[{"n":1,"file":"slide-01.mp4","src":"pred-odjezdem/v3/editorial/slide-01.mp4","poster":"pred-odjezdem/v3/editorial/slide-01.jpg","size":191736,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"pred-odjezdem/v3/editorial/slide-02.mp4","poster":"pred-odjezdem/v3/editorial/slide-02.jpg","size":232020,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"pred-odjezdem/v3/editorial/slide-03.mp4","poster":"pred-odjezdem/v3/editorial/slide-03.jpg","size":215872,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"pred-odjezdem/v3/editorial/slide-04.mp4","poster":"pred-odjezdem/v3/editorial/slide-04.jpg","size":200892,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"pred-odjezdem/v3/editorial/slide-05.mp4","poster":"pred-odjezdem/v3/editorial/slide-05.jpg","size":206338,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"pred-odjezdem/v3/editorial/slide-06.mp4","poster":"pred-odjezdem/v3/editorial/slide-06.jpg","size":226753,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"pred-odjezdem/v3/editorial/slide-07.mp4","poster":"pred-odjezdem/v3/editorial/slide-07.jpg","size":122123,"seconds":6}]},{"key":"pred-odjezdem-paper","label":"Papírový","file":"paper","w":1080,"h":1350,"seconds":6,"size":1467318,"slides":[{"n":1,"file":"slide-01.mp4","src":"pred-odjezdem/v3/paper/slide-01.mp4","poster":"pred-odjezdem/v3/paper/slide-01.jpg","size":163074,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"pred-odjezdem/v3/paper/slide-02.mp4","poster":"pred-odjezdem/v3/paper/slide-02.jpg","size":203001,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"pred-odjezdem/v3/paper/slide-03.mp4","poster":"pred-odjezdem/v3/paper/slide-03.jpg","size":201455,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"pred-odjezdem/v3/paper/slide-04.mp4","poster":"pred-odjezdem/v3/paper/slide-04.jpg","size":251500,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"pred-odjezdem/v3/paper/slide-05.mp4","poster":"pred-odjezdem/v3/paper/slide-05.jpg","size":193111,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"pred-odjezdem/v3/paper/slide-06.mp4","poster":"pred-odjezdem/v3/paper/slide-06.jpg","size":302316,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"pred-odjezdem/v3/paper/slide-07.mp4","poster":"pred-odjezdem/v3/paper/slide-07.jpg","size":152861,"seconds":6}]}],"approvalKey":"_approval-pred-odjezdem","comments":true},{"slug":"kwh","title":"1 kWh: co všechno za ní doma zvládnete?","v":1,"date":"2026-10-18","status":"review","changes":[],"videos":[{"key":"kwh-nolightleak","label":"Čistý","file":"no-light-leak","w":1080,"h":1350,"seconds":6,"size":1948742,"slides":[{"n":1,"file":"slide-01.mp4","src":"kwh/v1/no-light-leak/slide-01.mp4","poster":"kwh/v1/no-light-leak/slide-01.jpg","size":296952,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"kwh/v1/no-light-leak/slide-02.mp4","poster":"kwh/v1/no-light-leak/slide-02.jpg","size":266075,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"kwh/v1/no-light-leak/slide-03.mp4","poster":"kwh/v1/no-light-leak/slide-03.jpg","size":230148,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"kwh/v1/no-light-leak/slide-04.mp4","poster":"kwh/v1/no-light-leak/slide-04.jpg","size":239763,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"kwh/v1/no-light-leak/slide-05.mp4","poster":"kwh/v1/no-light-leak/slide-05.jpg","size":320292,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"kwh/v1/no-light-leak/slide-06.mp4","poster":"kwh/v1/no-light-leak/slide-06.jpg","size":304635,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"kwh/v1/no-light-leak/slide-07.mp4","poster":"kwh/v1/no-light-leak/slide-07.jpg","size":290877,"seconds":6}]},{"key":"kwh-cinematic","label":"Filmový","file":"cinematic","w":1080,"h":1350,"seconds":6,"size":6496939,"slides":[{"n":1,"file":"slide-01.mp4","src":"kwh/v1/cinematic/slide-01.mp4","poster":"kwh/v1/cinematic/slide-01.jpg","size":832707,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"kwh/v1/cinematic/slide-02.mp4","poster":"kwh/v1/cinematic/slide-02.jpg","size":961554,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"kwh/v1/cinematic/slide-03.mp4","poster":"kwh/v1/cinematic/slide-03.jpg","size":936695,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"kwh/v1/cinematic/slide-04.mp4","poster":"kwh/v1/cinematic/slide-04.jpg","size":1057333,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"kwh/v1/cinematic/slide-05.mp4","poster":"kwh/v1/cinematic/slide-05.jpg","size":888630,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"kwh/v1/cinematic/slide-06.mp4","poster":"kwh/v1/cinematic/slide-06.jpg","size":989796,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"kwh/v1/cinematic/slide-07.mp4","poster":"kwh/v1/cinematic/slide-07.jpg","size":830224,"seconds":6}]},{"key":"kwh-editorial","label":"Editorial","file":"editorial","w":1080,"h":1350,"seconds":6,"size":1887772,"slides":[{"n":1,"file":"slide-01.mp4","src":"kwh/v1/editorial/slide-01.mp4","poster":"kwh/v1/editorial/slide-01.jpg","size":275044,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"kwh/v1/editorial/slide-02.mp4","poster":"kwh/v1/editorial/slide-02.jpg","size":307783,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"kwh/v1/editorial/slide-03.mp4","poster":"kwh/v1/editorial/slide-03.jpg","size":236235,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"kwh/v1/editorial/slide-04.mp4","poster":"kwh/v1/editorial/slide-04.jpg","size":258566,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"kwh/v1/editorial/slide-05.mp4","poster":"kwh/v1/editorial/slide-05.jpg","size":303082,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"kwh/v1/editorial/slide-06.mp4","poster":"kwh/v1/editorial/slide-06.jpg","size":285673,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"kwh/v1/editorial/slide-07.mp4","poster":"kwh/v1/editorial/slide-07.jpg","size":221389,"seconds":6}]},{"key":"kwh-paper","label":"Papírový","file":"paper","w":1080,"h":1350,"seconds":6,"size":2350475,"slides":[{"n":1,"file":"slide-01.mp4","src":"kwh/v1/paper/slide-01.mp4","poster":"kwh/v1/paper/slide-01.jpg","size":433704,"seconds":6},{"n":2,"file":"slide-02.mp4","src":"kwh/v1/paper/slide-02.mp4","poster":"kwh/v1/paper/slide-02.jpg","size":272423,"seconds":6},{"n":3,"file":"slide-03.mp4","src":"kwh/v1/paper/slide-03.mp4","poster":"kwh/v1/paper/slide-03.jpg","size":257462,"seconds":6},{"n":4,"file":"slide-04.mp4","src":"kwh/v1/paper/slide-04.mp4","poster":"kwh/v1/paper/slide-04.jpg","size":279052,"seconds":6},{"n":5,"file":"slide-05.mp4","src":"kwh/v1/paper/slide-05.mp4","poster":"kwh/v1/paper/slide-05.jpg","size":547896,"seconds":6},{"n":6,"file":"slide-06.mp4","src":"kwh/v1/paper/slide-06.mp4","poster":"kwh/v1/paper/slide-06.jpg","size":293111,"seconds":6},{"n":7,"file":"slide-07.mp4","src":"kwh/v1/paper/slide-07.mp4","poster":"kwh/v1/paper/slide-07.jpg","size":266827,"seconds":6}]}],"approvalKey":"_approval-kwh","comments":true}]}/*@END*/;
+const API = DATA.endpoint;
+
+const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+const mb = (n) => `${(n / 1048576).toFixed(1).replace(".", ",")} MB`;
+const day = (d) => new Date(d).toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric", year: "numeric" });
+const rtf = new Intl.RelativeTimeFormat("cs", { numeric: "auto" });
+const ago = (iso) => {
+  const s = (new Date(iso) - Date.now()) / 1000;
+  const units = [["year", 31536000], ["month", 2592000], ["day", 86400], ["hour", 3600], ["minute", 60]];
+  for (const [u, n] of units) if (Math.abs(s) >= n) return rtf.format(Math.round(s / n), u);
+  return "právě teď";
+};
+const el = (tag, attrs = {}, ...kids) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v;
+    else if (k === "text") e.textContent = v;
+    else e.setAttribute(k, v);
+  }
+  for (const k of kids) if (k) e.append(k);
+  return e;
+};
+const AV = DATA.theme.avatars;
+const avatar = (name) => {
+  let h = 0;
+  for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) | 0;
+  const a = el("div", { class: "av", "aria-hidden": "true", text: name.trim().split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase() || "?" });
+  a.style.background = AV[Math.abs(h) % AV.length];
+  return a;
+};
+
+// name, remembered on this device
+const nameInput = document.getElementById("name");
+try { nameInput.value = localStorage.getItem("electree-review-name") || ""; } catch {}
+nameInput.addEventListener("input", () => {
+  nameInput.classList.remove("need");
+  try { localStorage.setItem("electree-review-name", nameInput.value.trim()); } catch {}
+});
+const needName = () => {
+  if (nameInput.value.trim()) return false;
+  nameInput.classList.add("need");
+  nameInput.scrollIntoView({ block: "center", behavior: "smooth" });
+  nameInput.focus();
+  return true;
+};
+
+let comments = [];
+const cards = []; // { ver, vid, render(list) }
+
+async function load() {
+  if (!API) return;
+  try {
+    const r = await fetch(`${API}?project=${encodeURIComponent(DATA.project.key)}`);
+    const j = await r.json();
+    if (j.ok) {
+      comments = j.comments;
+      cards.forEach((c) => c.render());
+      approvalBoxes.forEach((r) => r());
+    }
+  } catch {}
+}
+
+async function post(body) {
+  const r = await fetch(API, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ project: DATA.project.key, ...body }) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || "failed");
+  return j.comment;
+}
+
+const open = (ver) => !!API && ver.comments !== false;
+const CAROUSEL = DATA.project.type === "carousel" || DATA.versions.some((x) => x.videos.some((v) => v.slides));
+const APPROVE = CAROUSEL ? "Schvaluji tento příspěvek" : "Schvaluji toto video";
+
+// One card per video, or per carousel look (vid.slides): a carousel switches between its slides
+// (strip of thumbnails, arrows, swipe) and comments are stored per slide as "<look>-sNN".
+function videoCard(ver, vid) {
+  const multi = !!vid.slides;
+  const clips = multi
+    ? vid.slides.map((sl) => ({ ...sl, key: `${vid.key}-s${String(sl.n).padStart(2, "0")}`, name: `Snímek ${sl.n}` }))
+    : [{ ...vid, name: "" }];
+  const clipOf = new Map(clips.map((c, i) => [c.key, i]));
+  let cur = 0;
+
+  const card = el("article", { class: `card${multi ? " carousel" : ""}` });
+  card.append(el("h3", {}, el("b", { text: vid.label }), el("span", { text: multi ? `${vid.w}×${vid.h} · ${clips.length} snímků` : `${vid.w}×${vid.h} · ${fmt(vid.seconds)}` })));
+  const video = el("video", { controls: "", playsinline: "", preload: "metadata" });
+  if (multi) {
+    video.muted = true;
+    video.loop = true;
+    if (vid.w && vid.h) video.style.aspectRatio = `${vid.w} / ${vid.h}`; // no jump between slides
+  }
+  const frame = el("div", { class: "frame" }, video);
+  card.append(frame);
+
+  // carousel: arrows, counter, thumbnail strip, swipe
+  const thumbs = [];
+  let prevBtn, nextBtn;
+  if (multi) {
+    prevBtn = el("button", { class: "nav prev", type: "button", "aria-label": "Předchozí snímek", text: "‹" });
+    nextBtn = el("button", { class: "nav next", type: "button", "aria-label": "Další snímek", text: "›" });
+    prevBtn.addEventListener("click", () => select(cur - 1, true));
+    nextBtn.addEventListener("click", () => select(cur + 1, true));
+    frame.append(prevBtn, nextBtn);
+    let x0 = null, y0 = 0;
+    frame.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    frame.addEventListener("touchend", (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) select(cur + (dx < 0 ? 1 : -1), true);
+    });
+    const strip = el("div", { class: "strip", role: "group", "aria-label": `${vid.label}, snímky` });
+    clips.forEach((c, i) => {
+      const b = el("button", { class: "thumb", type: "button", "aria-label": `${c.name} z ${clips.length}`, title: c.name }, el("img", { src: c.poster, alt: "", loading: "lazy" }), el("span", { text: String(c.n) }));
+      b.addEventListener("click", () => select(i, true));
+      strip.append(b);
+      thumbs.push(b);
+    });
+    card.append(strip);
+  }
+
+  // per-second timeline of the current clip
+  const ticks = el("div", { class: "ticks", role: "group" });
+  const scale = el("div", { class: "scale", "aria-hidden": "true" });
+  let tickEls = [];
+  let n = 1;
+  card.append(el("div", { class: "timeline" }, ticks, scale));
+
+  // composer
+  const at = (s) => (multi ? `${clips[cur].name.toLowerCase()}, ${fmt(s)}` : fmt(s));
+  const sec = () => Math.min(n - 1, Math.floor(video.currentTime || 0));
+  const text = el("textarea", { id: `t-v${ver.v}-${vid.key}`, maxlength: "2000", placeholder: multi ? "Napište komentář k tomuto snímku…" : "Napište komentář…", "aria-label": `Komentář k ${multi ? "příspěvku" : "videu"} ${vid.label}` });
+  const send = el("button", { class: "act primary", type: "button" });
+  const note = el("div", { class: "note", role: "status" });
+  const dl = el("a", { class: "act" });
+  text.addEventListener("focus", () => video.pause());
+  const paint = () => {
+    const c = sec();
+    tickEls.forEach((t, i) => { t.classList.toggle("on", i === c); t.classList.toggle("past", i < c); });
+    send.textContent = `Odeslat · ${at(c)}`;
+  };
+  video.addEventListener("timeupdate", paint);
+  video.addEventListener("seeked", paint);
+  send.addEventListener("click", async () => {
+    if (!text.value.trim()) { text.focus(); return; }
+    if (needName()) return;
+    send.disabled = true;
+    note.textContent = "Odesílám…";
+    try {
+      const c = await post({ version: ver.v, video: clips[cur].key, second: sec(), name: nameInput.value.trim(), text: text.value.trim() });
+      comments.push({ ...c, created: new Date().toISOString(), done: false });
+      text.value = "";
+      note.textContent = `Komentář (${at(c.second)}) je uložený.`;
+      render();
+    } catch {
+      note.textContent = "Komentář se nepodařilo uložit. Zkontrolujte připojení a zkuste to znovu.";
+    } finally {
+      send.disabled = false;
+    }
+  });
+  if (open(ver)) card.append(el("div", { class: "composer" }, text, el("div", { class: "row" }, send, dl), note));
+  else card.append(el("div", { class: "row" }, dl), el("div", { class: "note", text: ver.status === "final" ? "Finální verze: komentáře jsou uzavřené." : "Komentáře k této verzi jsou vypnuté." }));
+
+  // switch clip (a carousel slide; a plain video has one)
+  function select(i, play) {
+    cur = Math.max(0, Math.min(clips.length - 1, i));
+    const c = clips[cur];
+    if (video.getAttribute("data-key") !== c.key) {
+      video.setAttribute("data-key", c.key);
+      video.src = multi ? c.src : `${c.src}#t=0.1`; // slides have posters; a #t start would override seeks
+      if (c.poster) video.poster = c.poster;
+    }
+    if (play) video.play().catch(() => {});
+    n = Math.max(1, Math.ceil(c.seconds));
+    tickEls = [];
+    ticks.replaceChildren();
+    ticks.setAttribute("aria-label", `${vid.label}${multi ? `, ${c.name}` : ""}, časová osa`);
+    for (let s = 0; s < n; s++) {
+      const t = el("button", { class: "tick", type: "button", title: fmt(s), "aria-label": `${multi ? `${c.name} ` : ""}v ${fmt(s)}` });
+      t.addEventListener("click", () => { video.currentTime = s; });
+      ticks.append(t);
+      tickEls.push(t);
+    }
+    scale.replaceChildren();
+    const step = n > 40 ? 10 : n > 12 ? 5 : 1;
+    for (let s = 0; s < n; s += step) {
+      const sp = el("span", { text: fmt(s) });
+      sp.style.left = `${(s / n) * 100}%`;
+      scale.append(sp);
+    }
+    dl.href = c.src;
+    dl.setAttribute("download", multi ? `${vid.file}-${c.file}` : c.file);
+    dl.textContent = `Stáhnout ${multi ? `snímek ${c.n}` : "MP4"} · ${mb(c.size)}`;
+    if (multi) {
+      prevBtn.hidden = cur === 0;
+      nextBtn.hidden = cur === clips.length - 1;
+      thumbs.forEach((t, j) => t.classList.toggle("on", j === cur));
+    }
+    paint();
+    mark();
+  }
+
+  // thread list
+  const list = el("div", { class: "thread" });
+  card.append(list);
+  const seek = (key, s) => {
+    const i = clipOf.get(key) ?? 0;
+    const switched = i !== cur;
+    if (switched) select(i, false);
+    const go = () => { video.currentTime = s; video.pause(); };
+    // a freshly switched slide has to load its metadata first
+    if (!switched && video.readyState >= 1) go(); else video.addEventListener("loadedmetadata", go, { once: true });
+    video.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  };
+
+  function item(c, isReply) {
+    const top = el("div", { class: "top" }, el("span", { class: "who", text: c.name }));
+    if (!isReply) {
+      const where = multi ? `${clips[clipOf.get(c.video)]?.name ?? "Snímek"} · ${fmt(c.second)}` : fmt(c.second);
+      const chip = el("button", { class: "chip", type: "button", text: where, "aria-label": `Přejít na ${where}` });
+      chip.addEventListener("click", () => seek(c.video, c.second));
+      top.append(chip);
+    }
+    top.append(el("span", { class: "when", text: ago(c.created) }));
+    if (c.done) top.append(el("span", { class: "badge", text: "✓ Vyřešeno" }));
+    const body = el("div", { class: "body" }, top, el("div", { class: "txt", text: c.text }));
+    const wrap = el("div", { class: `c${isReply ? " reply" : ""}${c.done ? " done" : ""}` }, avatar(c.name), body);
+    if (!isReply && open(ver)) {
+      const rb = el("button", { class: "linkbtn", type: "button", text: "Odpovědět" });
+      rb.addEventListener("click", () => {
+        if (body.querySelector("textarea")) return;
+        const ta = el("textarea", { maxlength: "2000", placeholder: "Vaše odpověď…", "aria-label": "Odpověď" });
+        const go = el("button", { class: "act primary", type: "button", text: "Odeslat odpověď" });
+        const msg = el("div", { class: "note", role: "status" });
+        go.addEventListener("click", async () => {
+          if (!ta.value.trim()) { ta.focus(); return; }
+          if (needName()) return;
+          go.disabled = true;
+          try {
+            const r = await post({ version: ver.v, video: c.video, second: c.second, name: nameInput.value.trim(), text: ta.value.trim(), parent: c.id });
+            comments.push({ ...r, created: new Date().toISOString(), done: false });
+            render();
+          } catch {
+            msg.textContent = "Odpověď se nepodařilo uložit. Zkuste to znovu.";
+            go.disabled = false;
+          }
+        });
+        body.append(el("div", { class: "composer" }, ta, el("div", { class: "row" }, go), msg));
+        ta.focus();
+      });
+      body.append(rb);
+    }
+    return wrap;
+  }
+
+  const mine = () => comments.filter((c) => c.version === ver.v && clipOf.has(c.video));
+  // comment markers: seconds of the current clip, and which slides have comments
+  function mark() {
+    const roots = mine().filter((c) => !c.parent);
+    const here = new Set(roots.filter((c) => c.video === clips[cur].key).map((c) => c.second));
+    tickEls.forEach((t, i) => t.classList.toggle("has", here.has(i)));
+    const slides = new Set(roots.map((c) => c.video));
+    thumbs.forEach((t, j) => t.classList.toggle("has", slides.has(clips[j].key)));
+  }
+
+  function render() {
+    const all = mine();
+    list.hidden = !open(ver) && !all.length;
+    const roots = all.filter((c) => !c.parent).sort((a, b) => clipOf.get(a.video) - clipOf.get(b.video) || a.second - b.second || a.created.localeCompare(b.created));
+    list.replaceChildren(el("h4", { text: roots.length ? `Komentáře (${all.length})` : "Komentáře" }));
+    if (!roots.length) list.append(el("div", { class: "empty", text: "Zatím žádné komentáře." }));
+    for (const r of roots) {
+      list.append(item(r, false));
+      for (const rep of all.filter((c) => c.parent === r.id).sort((a, b) => a.created.localeCompare(b.created))) list.append(item(rep, true));
+    }
+    mark();
+  }
+  cards.push({ render });
+  select(0, false);
+  render();
+  return card;
+}
+
+const approvalBoxes = [];
+
+function approvalBox(ver) {
+  const box = el("div", { class: "approve" });
+  const render = () => {
+    const ok = comments.filter((c) => c.version === ver.v && c.video === (ver.approvalKey || "_approval"));
+    box.replaceChildren();
+    for (const a of ok) box.append(el("div", { class: "approved", text: `✓ Schváleno: ${a.name} · ${day(a.created)}` }));
+    if (ver.status === "final" || !open(ver)) return;
+    const btn = el("button", { class: "act primary", type: "button", text: APPROVE });
+    const msg = el("div", { class: "note", role: "status" });
+    let armed = false;
+    btn.addEventListener("click", async () => {
+      if (needName()) return;
+      if (!armed) {
+        armed = true;
+        btn.textContent = "Opravdu schválit? Klikněte znovu";
+        msg.textContent = "Schválení uvidí všichni s odkazem.";
+        return;
+      }
+      btn.disabled = true;
+      msg.textContent = "Odesílám…";
+      try {
+        const r = await post({ version: ver.v, video: ver.approvalKey || "_approval", second: 0, name: nameInput.value.trim(), text: `Schváleno: ${ver.title ? `${ver.title}, ` : ""}verze ${ver.v}` });
+        comments.push({ ...r, created: new Date().toISOString(), done: false });
+        render();
+      } catch {
+        btn.disabled = false;
+        msg.textContent = "Schválení se nepodařilo odeslat. Zkuste to znovu.";
+      }
+    });
+    box.append(el("div", { class: "row" }, btn), msg);
+  };
+  approvalBoxes.push(render);
+  render();
+  return box;
+}
+
+function versionSection(ver, latest) {
+  const s = el("section", { class: "version", id: ver.slug ? `p-${ver.slug}` : `v${ver.v}` });
+  s.append(el("div", { class: "vhead" },
+    el("h2", { text: ver.title || (latest ? DATA.project.title : "Dřívější verze") }),
+    el("span", { class: "date", text: day(ver.date) }),
+    el("span", { class: `pill${ver.status === "final" ? " final" : ""}`, text: ver.status === "final" ? "Finální" : "Ke schválení" })));
+  s.append(approvalBox(ver));
+  const landscape = ver.videos.every((v) => v.w > v.h);
+  const grid = el("div", { class: `videos${landscape ? " landscape" : ""}` });
+  for (const vid of ver.videos) grid.append(videoCard(ver, vid));
+  s.append(grid);
+  if (ver.changes && ver.changes.length) {
+    s.append(el("h3", { text: latest ? "Co se v této verzi změnilo" : "Co se změnilo" }));
+    const ul = el("ul", { class: "changes" });
+    for (const c of ver.changes) ul.append(el("li", { text: c }));
+    s.append(ul);
+  }
+  return s;
+}
+
+document.getElementById("title").textContent = DATA.project.title;
+document.getElementById("how").innerHTML = CAROUSEL
+  ? `<strong>Jak komentovat:</strong> u každé varianty příspěvku si vyberte snímek (šipky, přejetí prstem nebo náhledy pod ním), zastavte ho tam, kde chcete změnu, a napište komentář. Uloží se k danému snímku a sekundě a uvidí ho všichni, kdo mají tento odkaz. Když je verze v pořádku, klikněte na <strong>${APPROVE}</strong>.`
+  : `<strong>Jak komentovat:</strong> pusťte video, zastavte ho tam, kde chcete změnu, a napište komentář pod video. Uloží se k dané sekundě a uvidí ho všichni, kdo mají tento odkaz. Když je verze v pořádku, klikněte na <strong>${APPROVE}</strong>.`;
+const latest = DATA.versions[0];
+const meta = document.getElementById("meta");
+const allFinal = DATA.versions.every((v) => v.status === "final");
+const shown = DATA.project.bundle ? { status: allFinal ? "final" : "review", date: DATA.project.date || latest.date } : latest;
+meta.append(el("span", { class: `pill${shown.status === "final" ? " final" : ""}`, text: shown.status === "final" ? "Finální" : "Ke schválení" }));
+meta.append(el("span", { text: day(shown.date) }));
+const nPosts = DATA.versions.length;
+if (DATA.project.bundle) meta.append(el("span", { text: `${nPosts} ${nPosts === 1 ? "příspěvek" : nPosts < 5 ? "příspěvky" : "příspěvků"}` }));
+if (DATA.project.client) meta.append(el("span", { text: DATA.project.client }));
+const root = document.getElementById("versions");
+if (DATA.project.bundle) {
+  // several posts on one page: a jump list, then one section per post (each with its own approval)
+  if (DATA.versions.length > 1) {
+    const nav = el("nav", { class: "toc", "aria-label": "Příspěvky na této stránce" });
+    DATA.versions.forEach((v, i) => nav.append(el("a", { href: `#p-${v.slug}` }, el("span", { text: String(i + 1) }), el("b", { text: v.title }))));
+    root.append(nav);
+  }
+  const stack = el("div", { class: "stack" });
+  for (const v of DATA.versions) stack.append(versionSection(v, true));
+  root.append(stack);
+} else {
+root.append(versionSection(latest, true));
+}
+if (!DATA.project.bundle && DATA.versions.length > 1) {
+  const d = el("details", { class: "older" }, el("summary", { text: `Starší verze (${DATA.versions.length - 1})` }));
+  const inner = el("div", { class: "stack" });
+  for (const v of DATA.versions.slice(1)) inner.append(versionSection(v, false));
+  d.append(inner);
+  root.append(d);
+}
+document.getElementById("brand").textContent = DATA.theme.label;
+document.getElementById("foot").textContent = [DATA.theme.credit, DATA.project.title, `aktualizováno ${day(shown.date)}`].filter(Boolean).join(" · ");
+
+load();
+setInterval(() => { if (!document.hidden) load(); }, 30000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+</script>
+</body>
+</html>

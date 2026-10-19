@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>Revize videa Podzimní špička</title>
+<title>Revize · Podzimní špička</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@500&display=swap">
@@ -45,6 +45,17 @@ section.version { display: grid; gap: 18px; }
 .card h3 span { font: 500 12px/1.3 var(--mono); color: var(--muted); }
 .frame { background: #000; border-radius: 12px; overflow: hidden; }
 video { display: block; width: 100%; max-height: 72vh; object-fit: contain; background: #000; }
+.frame { position: relative; }
+.nav { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(255,255,255,.8); color: #000; font: 700 24px/1 var(--display); cursor: pointer; display: grid; place-items: center; padding-bottom: 3px; }
+.nav.prev { left: 10px; } .nav.next { right: 10px; } .nav[hidden] { display: none; }
+.nav:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(44px, 1fr); gap: 6px; overflow-x: auto; padding: 8px 0 2px; }
+.thumb { position: relative; padding: 0; border: 2px solid transparent; border-radius: 8px; overflow: hidden; background: #000; cursor: pointer; aspect-ratio: 4 / 5; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .7; }
+.thumb span { position: absolute; left: 4px; bottom: 3px; font: 700 11px/1 var(--display); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
+.thumb.on { border-color: var(--accent); } .thumb.on img { opacity: 1; }
+.thumb:focus-visible { outline: 3px solid var(--accent-ink); outline-offset: 1px; }
+.thumb.has::after { content: ""; position: absolute; right: 4px; top: 4px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px #000; }
 .timeline { display: grid; gap: 4px; }
 .ticks { display: flex; gap: 2px; height: 26px; align-items: stretch; }
 .tick { position: relative; flex: 1 1 0; min-width: 0; border: 0; padding: 0; border-radius: 3px; background: var(--tick); cursor: pointer; }
@@ -83,6 +94,11 @@ button.act:disabled { opacity: .55; cursor: default; }
 .changes { margin: 0; padding-left: 18px; display: grid; gap: 4px; max-width: 75ch; }
 .version > h3 { font: 700 15px/1.3 var(--display); margin: 0; }
 .stack { display: grid; gap: 32px; }
+.toc { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.toc a { display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none; font: 700 14px/1.3 var(--display); }
+.toc a span { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); font-size: 12px; }
+.toc a:hover, .toc a:focus-visible { border-color: var(--accent-ink); outline: none; }
+.stack > .version + .version { border-top: 2px solid var(--line); padding-top: 28px; }
 details.older { border-top: 1px solid var(--line); padding-top: 14px; }
 details.older > summary { cursor: pointer; font: 700 15px/1.3 var(--display); color: var(--muted); }
 details.older[open] > summary { margin-bottom: 18px; }
@@ -100,7 +116,7 @@ footer { color: var(--muted); font-size: 13px; }
 </header>
 <main class="wrap">
   <div class="how">
-    <div><strong>Jak komentovat:</strong> pusťte video, zastavte ho tam, kde chcete změnu, a napište komentář pod video. Uloží se k dané sekundě a uvidí ho všichni, kdo mají tento odkaz. Když je verze v pořádku, klikněte na <strong>Schvaluji toto video</strong>.</div>
+    <div id="how"></div>
     <label class="namebar" for="name">Vaše jméno <input id="name" maxlength="40" autocomplete="name" placeholder="např. Karel Novák"></label>
   </div>
   <div id="versions"></div>
@@ -108,7 +124,7 @@ footer { color: var(--muted); font-size: 13px; }
 </main>
 
 <script>
-const DATA = /*@DATA*/{"project":{"title":"Podzimní špička","client":"","key":"podzimni-spicka-f0d3fdba"},"endpoint":"https://script.google.com/macros/s/AKfycbyR8FEQTIhnetbsjmlv_J0BhK8oJGNCOEnQIuf7bdEbLM_VxPTijkUQ2SWUN2eZltIu/exec","theme":{"label":"Electree · revize videa","credit":"Připravilo Electree","avatars":["#D7FF00","#96D5B7","#D8EAE0","#BFE8A8","#E6F59A"]},"versions":[{"v":6,"date":"2026-10-18","status":"review","changes":["Nová hudba pod celým videem","Graf večerní špičky: kamera se přiblíží víc a popisky zůstávají v záběru","Každý titulek zůstane na obrazovce dost dlouho na přečtení"],"videos":[{"key":"nomusic","label":"Bez hudby","file":"PodzimniSpicka-NoMusic.mp4","src":"v6/PodzimniSpicka-NoMusic.mp4","poster":"v6/PodzimniSpicka-NoMusic.jpg","size":6106249,"w":1080,"h":1920,"seconds":36.5},{"key":"withmusic","label":"S hudbou","file":"PodzimniSpicka-WithMusic.mp4","src":"v6/PodzimniSpicka-WithMusic.mp4","poster":"v6/PodzimniSpicka-WithMusic.jpg","size":6106249,"w":1080,"h":1920,"seconds":36.5}],"comments":true}]}/*@END*/;
+const DATA = /*@DATA*/{"project":{"title":"Podzimní špička","client":"","key":"podzimni-spicka-f0d3fdba","type":"reel"},"endpoint":"https://script.google.com/macros/s/AKfycbyR8FEQTIhnetbsjmlv_J0BhK8oJGNCOEnQIuf7bdEbLM_VxPTijkUQ2SWUN2eZltIu/exec","theme":{"label":"Electree · revize","credit":"","avatars":["#D7FF00","#96D5B7","#D8EAE0","#BFE8A8","#E6F59A"]},"versions":[{"v":6,"date":"2026-10-18","status":"review","changes":["Nová hudba pod celým videem","Graf večerní špičky: kamera se přiblíží víc a popisky zůstávají v záběru","Každý titulek zůstane na obrazovce dost dlouho na přečtení"],"videos":[{"key":"nomusic","label":"Bez hudby","file":"PodzimniSpicka-NoMusic.mp4","src":"v6/PodzimniSpicka-NoMusic.mp4","poster":"v6/PodzimniSpicka-NoMusic.jpg","size":6106249,"w":1080,"h":1920,"seconds":36.5},{"key":"withmusic","label":"S hudbou","file":"PodzimniSpicka-WithMusic.mp4","src":"v6/PodzimniSpicka-WithMusic.mp4","poster":"v6/PodzimniSpicka-WithMusic.jpg","size":6106249,"w":1080,"h":1920,"seconds":36.5}],"comments":true}]}/*@END*/;
 const API = DATA.endpoint;
 
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
@@ -179,43 +195,76 @@ async function post(body) {
 }
 
 const open = (ver) => !!API && ver.comments !== false;
+const CAROUSEL = DATA.project.type === "carousel" || DATA.versions.some((x) => x.videos.some((v) => v.slides));
+const APPROVE = CAROUSEL ? "Schvaluji tento příspěvek" : "Schvaluji toto video";
 
+// One card per video, or per carousel look (vid.slides): a carousel switches between its slides
+// (strip of thumbnails, arrows, swipe) and comments are stored per slide as "<look>-sNN".
 function videoCard(ver, vid) {
-  const card = el("article", { class: "card" });
-  card.append(el("h3", {}, el("b", { text: vid.label }), el("span", { text: `${vid.w}×${vid.h} · ${fmt(vid.seconds)}` })));
-  const video = el("video", { src: `${vid.src}#t=0.1`, controls: "", playsinline: "", preload: "metadata" });
-  if (vid.poster) video.poster = vid.poster;
-  card.append(el("div", { class: "frame" }, video));
+  const multi = !!vid.slides;
+  const clips = multi
+    ? vid.slides.map((sl) => ({ ...sl, key: `${vid.key}-s${String(sl.n).padStart(2, "0")}`, name: `Snímek ${sl.n}` }))
+    : [{ ...vid, name: "" }];
+  const clipOf = new Map(clips.map((c, i) => [c.key, i]));
+  let cur = 0;
 
-  const n = Math.max(1, Math.ceil(vid.seconds));
-  const ticks = el("div", { class: "ticks", role: "group", "aria-label": `${vid.label}, časová osa` });
-  const tickEls = [];
-  for (let s = 0; s < n; s++) {
-    const t = el("button", { class: "tick", type: "button", title: fmt(s), "aria-label": `${vid.label} v ${fmt(s)}` });
-    t.addEventListener("click", () => { video.currentTime = s; });
-    ticks.append(t);
-    tickEls.push(t);
+  const card = el("article", { class: `card${multi ? " carousel" : ""}` });
+  card.append(el("h3", {}, el("b", { text: vid.label }), el("span", { text: multi ? `${vid.w}×${vid.h} · ${clips.length} snímků` : `${vid.w}×${vid.h} · ${fmt(vid.seconds)}` })));
+  const video = el("video", { controls: "", playsinline: "", preload: "metadata" });
+  if (multi) {
+    video.muted = true;
+    video.loop = true;
+    if (vid.w && vid.h) video.style.aspectRatio = `${vid.w} / ${vid.h}`; // no jump between slides
   }
+  const frame = el("div", { class: "frame" }, video);
+  card.append(frame);
+
+  // carousel: arrows, counter, thumbnail strip, swipe
+  const thumbs = [];
+  let prevBtn, nextBtn;
+  if (multi) {
+    prevBtn = el("button", { class: "nav prev", type: "button", "aria-label": "Předchozí snímek", text: "‹" });
+    nextBtn = el("button", { class: "nav next", type: "button", "aria-label": "Další snímek", text: "›" });
+    prevBtn.addEventListener("click", () => select(cur - 1, true));
+    nextBtn.addEventListener("click", () => select(cur + 1, true));
+    frame.append(prevBtn, nextBtn);
+    let x0 = null, y0 = 0;
+    frame.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    frame.addEventListener("touchend", (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) select(cur + (dx < 0 ? 1 : -1), true);
+    });
+    const strip = el("div", { class: "strip", role: "group", "aria-label": `${vid.label}, snímky` });
+    clips.forEach((c, i) => {
+      const b = el("button", { class: "thumb", type: "button", "aria-label": `${c.name} z ${clips.length}`, title: c.name }, el("img", { src: c.poster, alt: "", loading: "lazy" }), el("span", { text: String(c.n) }));
+      b.addEventListener("click", () => select(i, true));
+      strip.append(b);
+      thumbs.push(b);
+    });
+    card.append(strip);
+  }
+
+  // per-second timeline of the current clip
+  const ticks = el("div", { class: "ticks", role: "group" });
   const scale = el("div", { class: "scale", "aria-hidden": "true" });
-  const step = n > 40 ? 10 : 5;
-  for (let s = 0; s < n; s += step) {
-    const sp = el("span", { text: fmt(s) });
-    sp.style.left = `${(s / n) * 100}%`;
-    scale.append(sp);
-  }
+  let tickEls = [];
+  let n = 1;
   card.append(el("div", { class: "timeline" }, ticks, scale));
 
   // composer
+  const at = (s) => (multi ? `${clips[cur].name.toLowerCase()}, ${fmt(s)}` : fmt(s));
   const sec = () => Math.min(n - 1, Math.floor(video.currentTime || 0));
-  const text = el("textarea", { id: `t-v${ver.v}-${vid.key}`, maxlength: "2000", placeholder: "Napište komentář…", "aria-label": `Komentář k videu ${vid.label}` });
-  const send = el("button", { class: "act primary", type: "button", text: "Odeslat v 0:00" });
+  const text = el("textarea", { id: `t-v${ver.v}-${vid.key}`, maxlength: "2000", placeholder: multi ? "Napište komentář k tomuto snímku…" : "Napište komentář…", "aria-label": `Komentář k ${multi ? "příspěvku" : "videu"} ${vid.label}` });
+  const send = el("button", { class: "act primary", type: "button" });
   const note = el("div", { class: "note", role: "status" });
-  const dl = el("a", { class: "act", href: vid.src, download: vid.file, text: `Stáhnout MP4 · ${mb(vid.size)}` });
+  const dl = el("a", { class: "act" });
   text.addEventListener("focus", () => video.pause());
   const paint = () => {
     const c = sec();
     tickEls.forEach((t, i) => { t.classList.toggle("on", i === c); t.classList.toggle("past", i < c); });
-    send.textContent = `Odeslat v ${fmt(c)}`;
+    send.textContent = `Odeslat · ${at(c)}`;
   };
   video.addEventListener("timeupdate", paint);
   video.addEventListener("seeked", paint);
@@ -225,10 +274,10 @@ function videoCard(ver, vid) {
     send.disabled = true;
     note.textContent = "Odesílám…";
     try {
-      const c = await post({ version: ver.v, video: vid.key, second: sec(), name: nameInput.value.trim(), text: text.value.trim() });
+      const c = await post({ version: ver.v, video: clips[cur].key, second: sec(), name: nameInput.value.trim(), text: text.value.trim() });
       comments.push({ ...c, created: new Date().toISOString(), done: false });
       text.value = "";
-      note.textContent = `Komentář v ${fmt(c.second)} je uložený.`;
+      note.textContent = `Komentář (${at(c.second)}) je uložený.`;
       render();
     } catch {
       note.textContent = "Komentář se nepodařilo uložit. Zkontrolujte připojení a zkuste to znovu.";
@@ -239,16 +288,64 @@ function videoCard(ver, vid) {
   if (open(ver)) card.append(el("div", { class: "composer" }, text, el("div", { class: "row" }, send, dl), note));
   else card.append(el("div", { class: "row" }, dl), el("div", { class: "note", text: ver.status === "final" ? "Finální verze: komentáře jsou uzavřené." : "Komentáře k této verzi jsou vypnuté." }));
 
+  // switch clip (a carousel slide; a plain video has one)
+  function select(i, play) {
+    cur = Math.max(0, Math.min(clips.length - 1, i));
+    const c = clips[cur];
+    if (video.getAttribute("data-key") !== c.key) {
+      video.setAttribute("data-key", c.key);
+      video.src = multi ? c.src : `${c.src}#t=0.1`; // slides have posters; a #t start would override seeks
+      if (c.poster) video.poster = c.poster;
+    }
+    if (play) video.play().catch(() => {});
+    n = Math.max(1, Math.ceil(c.seconds));
+    tickEls = [];
+    ticks.replaceChildren();
+    ticks.setAttribute("aria-label", `${vid.label}${multi ? `, ${c.name}` : ""}, časová osa`);
+    for (let s = 0; s < n; s++) {
+      const t = el("button", { class: "tick", type: "button", title: fmt(s), "aria-label": `${multi ? `${c.name} ` : ""}v ${fmt(s)}` });
+      t.addEventListener("click", () => { video.currentTime = s; });
+      ticks.append(t);
+      tickEls.push(t);
+    }
+    scale.replaceChildren();
+    const step = n > 40 ? 10 : n > 12 ? 5 : 1;
+    for (let s = 0; s < n; s += step) {
+      const sp = el("span", { text: fmt(s) });
+      sp.style.left = `${(s / n) * 100}%`;
+      scale.append(sp);
+    }
+    dl.href = c.src;
+    dl.setAttribute("download", multi ? `${vid.file}-${c.file}` : c.file);
+    dl.textContent = `Stáhnout ${multi ? `snímek ${c.n}` : "MP4"} · ${mb(c.size)}`;
+    if (multi) {
+      prevBtn.hidden = cur === 0;
+      nextBtn.hidden = cur === clips.length - 1;
+      thumbs.forEach((t, j) => t.classList.toggle("on", j === cur));
+    }
+    paint();
+    mark();
+  }
+
   // thread list
   const list = el("div", { class: "thread" });
   card.append(list);
-  const seek = (s) => { video.currentTime = s; video.pause(); video.scrollIntoView({ block: "nearest", behavior: "smooth" }); };
+  const seek = (key, s) => {
+    const i = clipOf.get(key) ?? 0;
+    const switched = i !== cur;
+    if (switched) select(i, false);
+    const go = () => { video.currentTime = s; video.pause(); };
+    // a freshly switched slide has to load its metadata first
+    if (!switched && video.readyState >= 1) go(); else video.addEventListener("loadedmetadata", go, { once: true });
+    video.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  };
 
   function item(c, isReply) {
     const top = el("div", { class: "top" }, el("span", { class: "who", text: c.name }));
     if (!isReply) {
-      const chip = el("button", { class: "chip", type: "button", text: fmt(c.second), "aria-label": `Přejít na ${fmt(c.second)}` });
-      chip.addEventListener("click", () => seek(c.second));
+      const where = multi ? `${clips[clipOf.get(c.video)]?.name ?? "Snímek"} · ${fmt(c.second)}` : fmt(c.second);
+      const chip = el("button", { class: "chip", type: "button", text: where, "aria-label": `Přejít na ${where}` });
+      chip.addEventListener("click", () => seek(c.video, c.second));
       top.append(chip);
     }
     top.append(el("span", { class: "when", text: ago(c.created) }));
@@ -267,7 +364,7 @@ function videoCard(ver, vid) {
           if (needName()) return;
           go.disabled = true;
           try {
-            const r = await post({ version: ver.v, video: vid.key, second: c.second, name: nameInput.value.trim(), text: ta.value.trim(), parent: c.id });
+            const r = await post({ version: ver.v, video: c.video, second: c.second, name: nameInput.value.trim(), text: ta.value.trim(), parent: c.id });
             comments.push({ ...r, created: new Date().toISOString(), done: false });
             render();
           } catch {
@@ -283,20 +380,30 @@ function videoCard(ver, vid) {
     return wrap;
   }
 
+  const mine = () => comments.filter((c) => c.version === ver.v && clipOf.has(c.video));
+  // comment markers: seconds of the current clip, and which slides have comments
+  function mark() {
+    const roots = mine().filter((c) => !c.parent);
+    const here = new Set(roots.filter((c) => c.video === clips[cur].key).map((c) => c.second));
+    tickEls.forEach((t, i) => t.classList.toggle("has", here.has(i)));
+    const slides = new Set(roots.map((c) => c.video));
+    thumbs.forEach((t, j) => t.classList.toggle("has", slides.has(clips[j].key)));
+  }
+
   function render() {
-    const mine = comments.filter((c) => c.version === ver.v && c.video === vid.key);
-    list.hidden = !open(ver) && !mine.length;
-    const roots = mine.filter((c) => !c.parent).sort((a, b) => a.second - b.second || a.created.localeCompare(b.created));
-    const marked = new Set(roots.map((c) => c.second));
-    tickEls.forEach((t, i) => t.classList.toggle("has", marked.has(i)));
-    list.replaceChildren(el("h4", { text: roots.length ? `Komentáře (${mine.length})` : "Komentáře" }));
+    const all = mine();
+    list.hidden = !open(ver) && !all.length;
+    const roots = all.filter((c) => !c.parent).sort((a, b) => clipOf.get(a.video) - clipOf.get(b.video) || a.second - b.second || a.created.localeCompare(b.created));
+    list.replaceChildren(el("h4", { text: roots.length ? `Komentáře (${all.length})` : "Komentáře" }));
     if (!roots.length) list.append(el("div", { class: "empty", text: "Zatím žádné komentáře." }));
     for (const r of roots) {
       list.append(item(r, false));
-      for (const rep of mine.filter((c) => c.parent === r.id).sort((a, b) => a.created.localeCompare(b.created))) list.append(item(rep, true));
+      for (const rep of all.filter((c) => c.parent === r.id).sort((a, b) => a.created.localeCompare(b.created))) list.append(item(rep, true));
     }
+    mark();
   }
   cards.push({ render });
+  select(0, false);
   render();
   return card;
 }
@@ -306,11 +413,11 @@ const approvalBoxes = [];
 function approvalBox(ver) {
   const box = el("div", { class: "approve" });
   const render = () => {
-    const ok = comments.filter((c) => c.version === ver.v && c.video === "_approval");
+    const ok = comments.filter((c) => c.version === ver.v && c.video === (ver.approvalKey || "_approval"));
     box.replaceChildren();
     for (const a of ok) box.append(el("div", { class: "approved", text: `✓ Schváleno: ${a.name} · ${day(a.created)}` }));
     if (ver.status === "final" || !open(ver)) return;
-    const btn = el("button", { class: "act primary", type: "button", text: "Schvaluji toto video" });
+    const btn = el("button", { class: "act primary", type: "button", text: APPROVE });
     const msg = el("div", { class: "note", role: "status" });
     let armed = false;
     btn.addEventListener("click", async () => {
@@ -324,7 +431,7 @@ function approvalBox(ver) {
       btn.disabled = true;
       msg.textContent = "Odesílám…";
       try {
-        const r = await post({ version: ver.v, video: "_approval", second: 0, name: nameInput.value.trim(), text: `Schváleno: verze ${ver.v}` });
+        const r = await post({ version: ver.v, video: ver.approvalKey || "_approval", second: 0, name: nameInput.value.trim(), text: `Schváleno: ${ver.title ? `${ver.title}, ` : ""}verze ${ver.v}` });
         comments.push({ ...r, created: new Date().toISOString(), done: false });
         render();
       } catch {
@@ -340,9 +447,9 @@ function approvalBox(ver) {
 }
 
 function versionSection(ver, latest) {
-  const s = el("section", { class: "version", id: `v${ver.v}` });
+  const s = el("section", { class: "version", id: ver.slug ? `p-${ver.slug}` : `v${ver.v}` });
   s.append(el("div", { class: "vhead" },
-    el("h2", { text: latest ? DATA.project.title : "Dřívější verze" }),
+    el("h2", { text: ver.title || (latest ? DATA.project.title : "Dřívější verze") }),
     el("span", { class: "date", text: day(ver.date) }),
     el("span", { class: `pill${ver.status === "final" ? " final" : ""}`, text: ver.status === "final" ? "Finální" : "Ke schválení" })));
   s.append(approvalBox(ver));
@@ -360,14 +467,33 @@ function versionSection(ver, latest) {
 }
 
 document.getElementById("title").textContent = DATA.project.title;
+document.getElementById("how").innerHTML = CAROUSEL
+  ? `<strong>Jak komentovat:</strong> u každé varianty příspěvku si vyberte snímek (šipky, přejetí prstem nebo náhledy pod ním), zastavte ho tam, kde chcete změnu, a napište komentář. Uloží se k danému snímku a sekundě a uvidí ho všichni, kdo mají tento odkaz. Když je verze v pořádku, klikněte na <strong>${APPROVE}</strong>.`
+  : `<strong>Jak komentovat:</strong> pusťte video, zastavte ho tam, kde chcete změnu, a napište komentář pod video. Uloží se k dané sekundě a uvidí ho všichni, kdo mají tento odkaz. Když je verze v pořádku, klikněte na <strong>${APPROVE}</strong>.`;
 const latest = DATA.versions[0];
 const meta = document.getElementById("meta");
-meta.append(el("span", { class: `pill${latest.status === "final" ? " final" : ""}`, text: latest.status === "final" ? "Finální" : "Ke schválení" }));
-meta.append(el("span", { text: day(latest.date) }));
+const allFinal = DATA.versions.every((v) => v.status === "final");
+const shown = DATA.project.bundle ? { status: allFinal ? "final" : "review", date: DATA.project.date || latest.date } : latest;
+meta.append(el("span", { class: `pill${shown.status === "final" ? " final" : ""}`, text: shown.status === "final" ? "Finální" : "Ke schválení" }));
+meta.append(el("span", { text: day(shown.date) }));
+const nPosts = DATA.versions.length;
+if (DATA.project.bundle) meta.append(el("span", { text: `${nPosts} ${nPosts === 1 ? "příspěvek" : nPosts < 5 ? "příspěvky" : "příspěvků"}` }));
 if (DATA.project.client) meta.append(el("span", { text: DATA.project.client }));
 const root = document.getElementById("versions");
+if (DATA.project.bundle) {
+  // several posts on one page: a jump list, then one section per post (each with its own approval)
+  if (DATA.versions.length > 1) {
+    const nav = el("nav", { class: "toc", "aria-label": "Příspěvky na této stránce" });
+    DATA.versions.forEach((v, i) => nav.append(el("a", { href: `#p-${v.slug}` }, el("span", { text: String(i + 1) }), el("b", { text: v.title }))));
+    root.append(nav);
+  }
+  const stack = el("div", { class: "stack" });
+  for (const v of DATA.versions) stack.append(versionSection(v, true));
+  root.append(stack);
+} else {
 root.append(versionSection(latest, true));
-if (DATA.versions.length > 1) {
+}
+if (!DATA.project.bundle && DATA.versions.length > 1) {
   const d = el("details", { class: "older" }, el("summary", { text: `Starší verze (${DATA.versions.length - 1})` }));
   const inner = el("div", { class: "stack" });
   for (const v of DATA.versions.slice(1)) inner.append(versionSection(v, false));
@@ -375,7 +501,7 @@ if (DATA.versions.length > 1) {
   root.append(d);
 }
 document.getElementById("brand").textContent = DATA.theme.label;
-document.getElementById("foot").textContent = [DATA.theme.credit, DATA.project.title, `aktualizováno ${day(latest.date)}`].filter(Boolean).join(" · ");
+document.getElementById("foot").textContent = [DATA.theme.credit, DATA.project.title, `aktualizováno ${day(shown.date)}`].filter(Boolean).join(" · ");
 
 load();
 setInterval(() => { if (!document.hidden) load(); }, 30000);
