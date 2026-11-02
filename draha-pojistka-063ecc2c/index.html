@@ -124,7 +124,7 @@ footer { color: var(--muted); font-size: 13px; }
 </main>
 
 <script>
-const DATA = /*@DATA*/{"project":{"title":"Drahá pojistka","client":"Bateree","key":"draha-pojistka-063ecc2c","type":"reel"},"endpoint":"https://script.google.com/macros/s/AKfycbyR8FEQTIhnetbsjmlv_J0BhK8oJGNCOEnQIuf7bdEbLM_VxPTijkUQ2SWUN2eZltIu/exec","theme":{"label":"Bateree · revize","credit":"","avatars":["#00C899","#73E1C6","#E0F8F3","#9FE9D5","#4FD6B2"]},"versions":[{"v":4,"date":"2026-11-02","status":"review","changes":["Nová vizuální varianta: světlé 3D studio s jednou baterií uprostřed a kamerou, která ji obkružuje","Stejný hlas, texty i délka jako verze 2"],"videos":[{"key":"3d","label":"3D studio","file":"DrahaPojistka-3D.mp4","src":"v4/DrahaPojistka-3D.mp4","poster":"v4/DrahaPojistka-3D.jpg","size":4038845,"w":1080,"h":1920,"seconds":41}],"comments":true},{"v":3,"date":"2026-11-02","status":"review","changes":["Nová vizuální varianta: izometrický svět (továrna, rozvodna a baterie jako vlastní 3D ilustrace)","Stejný hlas, texty i délka jako verze 2"],"videos":[{"key":"isov2","label":"Izometrický svět","file":"DrahaPojistka-IsoV2.mp4","src":"v3/DrahaPojistka-IsoV2.mp4","poster":"v3/DrahaPojistka-IsoV2.jpg","size":6389146,"w":1080,"h":1920,"seconds":41}],"comments":true},{"v":2,"date":"2026-11-02","status":"review","changes":["Kratší pauzy mezi větami, video je o 3,5 s kratší (41 s)","Víc pohybu ve scénách: cenovka a výpadek u skříňky, načítání dalších funkcí, ukazatel času v grafu, vlna přes měsíc a skrytá hodnota baterie"],"videos":[{"key":"nomusic","label":"Bez hudby","file":"DrahaPojistka-NoMusic.mp4","src":"v2/DrahaPojistka-NoMusic.mp4","poster":"v2/DrahaPojistka-NoMusic.jpg","size":5629463,"w":1080,"h":1920,"seconds":41}],"comments":true},{"v":1,"date":"2026-11-02","status":"review","changes":["Nové zpracování videa Drahá pojistka v barvách a s logem Bateree","Původní hlas, nová animace: skříňka „V případě nouze“, graf odběru, náklady, měsíc a hodnota baterie","Na konci logo Bateree s vysloveným názvem"],"videos":[{"key":"nomusic","label":"Bez hudby","file":"DrahaPojistka-NoMusic.mp4","src":"v1/DrahaPojistka-NoMusic.mp4","poster":"v1/DrahaPojistka-NoMusic.jpg","size":5780635,"w":1080,"h":1920,"seconds":44.5}],"comments":true}]}/*@END*/;
+const DATA = /*@DATA*/{"project":{"title":"Drahá pojistka","client":"Bateree","key":"draha-pojistka-063ecc2c","type":"reel","showAll":true},"endpoint":"https://script.google.com/macros/s/AKfycbyR8FEQTIhnetbsjmlv_J0BhK8oJGNCOEnQIuf7bdEbLM_VxPTijkUQ2SWUN2eZltIu/exec","theme":{"label":"Bateree · revize","credit":"","avatars":["#00C899","#73E1C6","#E0F8F3","#9FE9D5","#4FD6B2"]},"versions":[{"v":4,"date":"2026-11-02","status":"review","changes":["Nová vizuální varianta: světlé 3D studio s jednou baterií uprostřed a kamerou, která ji obkružuje","Stejný hlas, texty i délka jako verze 2"],"videos":[{"key":"3d","label":"3D studio","file":"DrahaPojistka-3D.mp4","src":"v4/DrahaPojistka-3D.mp4","poster":"v4/DrahaPojistka-3D.jpg","size":4038845,"w":1080,"h":1920,"seconds":41}],"title":"Varianta C · 3D studio","comments":true},{"v":3,"date":"2026-11-02","status":"review","changes":["Nová vizuální varianta: izometrický svět (továrna, rozvodna a baterie jako vlastní 3D ilustrace)","Stejný hlas, texty i délka jako verze 2"],"videos":[{"key":"isov2","label":"Izometrický svět","file":"DrahaPojistka-IsoV2.mp4","src":"v3/DrahaPojistka-IsoV2.mp4","poster":"v3/DrahaPojistka-IsoV2.jpg","size":6389146,"w":1080,"h":1920,"seconds":41}],"title":"Varianta B · Izometrický svět","comments":true},{"v":2,"date":"2026-11-02","status":"review","changes":["Kratší pauzy mezi větami, video je o 3,5 s kratší (41 s)","Víc pohybu ve scénách: cenovka a výpadek u skříňky, načítání dalších funkcí, ukazatel času v grafu, vlna přes měsíc a skrytá hodnota baterie"],"videos":[{"key":"nomusic","label":"Bez hudby","file":"DrahaPojistka-NoMusic.mp4","src":"v2/DrahaPojistka-NoMusic.mp4","poster":"v2/DrahaPojistka-NoMusic.jpg","size":5629463,"w":1080,"h":1920,"seconds":41}],"title":"Varianta A · Ploché karty","comments":true}]}/*@END*/;
 const API = DATA.endpoint;
 
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
@@ -490,10 +490,15 @@ if (DATA.project.bundle) {
   const stack = el("div", { class: "stack" });
   for (const v of DATA.versions) stack.append(versionSection(v, true));
   root.append(stack);
+} else if (DATA.project.showAll) {
+  // project.json review.showAll: every version open side by side (e.g. look variants to choose from), oldest first
+  const stack = el("div", { class: "stack" });
+  for (const v of [...DATA.versions].sort((x, y) => x.v - y.v)) stack.append(versionSection(v, true));
+  root.append(stack);
 } else {
 root.append(versionSection(latest, true));
 }
-if (!DATA.project.bundle && DATA.versions.length > 1) {
+if (!DATA.project.bundle && !DATA.project.showAll && DATA.versions.length > 1) {
   const d = el("details", { class: "older" }, el("summary", { text: `Starší verze (${DATA.versions.length - 1})` }));
   const inner = el("div", { class: "stack" });
   for (const v of DATA.versions.slice(1)) inner.append(versionSection(v, false));
